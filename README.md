@@ -7,6 +7,7 @@
 | Раздел | Описание |
 |--------|----------|
 | [Схемы архитектуры](./docs/schemas.md) | Mermaid-диаграммы: data flow, CLI lifecycle, структура JSON |
+| [Скилл KiloCode](./.skills/local-rag-store.md) | Автоустановка + автозапуск RAG в любом проекте |
 | [Десктоп-монитор (Tauri)](./desktop/README.md) | GUI для просмотра чанков и связей |
 | [Зачем это нужно](#зачем-это-нужно) | Проблема контекстного окна LLM |
 | [Как это работает — простыми словами](#как-это-работает--простыми-словами) | Общая картина |
@@ -498,6 +499,8 @@ local-rag-store/
 │   │   └── rag-autosave.md   # Автосохранение контекста агентом
 │   └── command/
 │       └── rag-save.md       # Ручное сохранение /rag-save
+├── .skills/
+│   └── local-rag-store.md    # Скилл для любого проекта KiloCode
 ├── desktop/                  # Tauri-монитор (опционально)
 │   ├── src-tauri/            # Rust-backend
 │   ├── src/                  # Frontend (HTML/CSS/JS)
