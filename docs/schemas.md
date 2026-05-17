@@ -1,5 +1,19 @@
 # Схемы local-rag-store
 
+| № | Раздел | Описание |
+|---|--------|----------|
+| 1 | [О системе](#о-системе) | Назначение, принцип работы, опциональность Desktop |
+| 2 | [Архитектура](#архитектура-cli--опциональный-desktop) | CLI + RAG Core + Desktop + Ollama — общая схема |
+| 3 | [Data Flow: add()](#data-flow-add) | Последовательность операций при добавлении чанка |
+| 4 | [Data Flow: search()](#data-flow-search) | Эмбеддинг запроса, cosine similarity, возврат результатов |
+| 5 | [Data Flow: save / load](#data-flow-save--load) | Персистентность: запись и чтение JSON-дампа |
+| 6 | [CLI Lifecycle](#cli-lifecycle-интеграция-с-kilocode) | Жизненный цикл сессии KiloCode через CLI |
+| 7 | [Desktop Monitor](#desktop-monitor-опционально) | Tauri GUI: Dashboard, Explorer, Graph |
+| 8 | [Структура JSON-дампа](#структура-json-дампа) | Формат файла: version, chunks, meta |
+| 9 | [Полная диаграмма компонентов](#полная-диаграмма-компонентов) | Все модули, их связи и внешние зависимости |
+
+---
+
 ## О системе
 
 `local-rag-store` — локальное RAG-хранилище для сохранения и поиска контекста диалогов с LLM.
