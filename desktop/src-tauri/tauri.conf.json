@@ -1,0 +1,27 @@
+{
+  "productName": "local-rag-store",
+  "identifier": "com.localrag.store",
+  "build": {
+    "frontendDist": "../src",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "local-rag-store — монитор RAG",
+        "width": 1100,
+        "height": 750,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": false
+  }
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>local-rag-store — монитор</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header>
+      <h1>local-rag-store</h1>
+      <span class="subtitle">монитор RAG-хранилища</span>
+    </header>
+
+    <!-- Path selector -->
+    <section id="path-section">
+      <label for="dump-path">Путь к дампу</label>
+      <div class="path-row">
+        <input type="text" id="dump-path" placeholder=".kilo/rag-context.json" spellcheck="false" />
+        <button id="btn-browse">Обзор</button>
+        <button id="btn-load" class="primary">Загрузить</button>
+      </div>
+    </section>
+
+    <!-- Status bar -->
+    <div id="status-bar" class="hidden">
+      <span id="status-msg"></span>
+    </div>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="hidden">
+      <div class="cards">
+        <div class="card">
+          <div class="card-value" id="stat-chunks">—</div>
+          <div class="card-label">Чанков</div>
+        </div>
+        <div class="card">
+          <div class="card-value" id="stat-convs">—</div>
+          <div class="card-label">Диалогов</div>
+        </div>
+        <div class="card">
+          <div class="card-value" id="stat-ram">—</div>
+          <div class="card-label">RAM (приблизительно)</div>
+        </div>
+        <div class="card">
+          <div class="card-value" id="stat-version">—</div>
+          <div class="card-label">Версия дампа</div>
+        </div>
+      </div>
+      <div class="card saved-at">
+        Сохранён: <span id="stat-saved-at">—</span>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <section id="tabs" class="hidden">
+      <nav class="tab-bar">
+        <button class="tab active" data-tab="explorer">Поиск чанков</button>
+        <button class="tab" data-tab="graph">Связи</button>
+        <button class="tab" data-tab="conversations">Диалоги</button>
+      </nav>
+
+      <!-- Explorer tab -->
+      <div class="tab-content active" id="tab-explorer">
+        <div class="explorer-toolbar">
+          <input type="text" id="search-query" placeholder="Поиск по тексту..." spellcheck="false" />
+          <select id="search-role">
+            <option value="">Все роли</option>
+            <option value="user">user</option>
+            <option value="assistant">assistant</option>
+            <option value="system">system</option>
+          </select>
+          <input type="text" id="search-conv" placeholder="conversationId" spellcheck="false" />
+          <button id="btn-search" class="primary">Найти</button>
+        </div>
+        <div id="search-results">
+          <div class="placeholder">Начните поиск</div>
+        </div>
+        <div id="result-count" class="hidden"></div>
+      </div>
+
+      <!-- Graph tab -->
+      <div class="tab-content" id="tab-graph">
+        <div class="graph-toolbar">
+          <input type="text" id="graph-chunk-id" placeholder="ID чанка для связей" spellcheck="false" />
+          <label>
+            Порог сходства
+            <input type="range" id="graph-threshold" min="0.5" max="1" step="0.05" value="0.75" />
+            <span id="graph-threshold-val">0.75</span>
+          </label>
+          <button id="btn-build-graph" class="primary">Построить</button>
+        </div>
+        <canvas id="graph-canvas"></canvas>
+        <div id="graph-legend" class="hidden"></div>
+      </div>
+
+      <!-- Conversations tab -->
+      <div class="tab-content" id="tab-conversations">
+        <div id="conv-list">
+          <div class="placeholder">Загрузите дамп</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section id="actions" class="hidden">
+      <button id="btn-clear" class="danger">Очистить дамп (с бэкапом)</button>
+      <button id="btn-refresh">Обновить</button>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
