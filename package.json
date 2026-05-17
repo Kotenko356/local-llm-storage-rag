@@ -1,0 +1,11 @@
+{
+  "name": "local-rag-store",
+  "version": "0.1.0",
+  "description": "Local RAG storage for LLM context windows. Chunks, embeds via Ollama, searches via cosine similarity.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js",
+    "start": "node cli.js"
+  }
+}
