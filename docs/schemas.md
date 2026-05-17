@@ -33,26 +33,26 @@ node cli.js list  # (если реализовано)
 ```mermaid
 flowchart LR
     subgraph CLI ["CLI (основной канал)"]
-        A1[KiloCode / Пользователь] -->|bash: add / search / save / load| B[cli.js]
+        A1["KiloCode / Пользователь"] -->|"bash: add / search / save / load"| B[cli.js]
     end
 
     subgraph CORE ["RAG Core (index.js)"]
         B -->|"new LocalRAG()"| C[LocalRAG]
-        C -->|embed(text)| D[embedder.js]
-        D -->|POST /api/embed| E[Ollama\nnomic-embed-text]
-        E -->|вектор 768D| C
-        C -->|"Map<id, {v, text, meta}>"| F[RAM]
-        C -->|save / load| G[JSON дамп\nна диске]
+        C -->|"embed(text)"| D[embedder.js]
+        D -->|"POST /api/embed"| E["Ollama\nnomic-embed-text"]
+        E -->|"вектор 768D"| C
+        C -->|"Map(id, v, text, meta)"| F[RAM]
+        C -->|"save / load"| G["JSON дамп\nна диске"]
     end
 
     subgraph DESKTOP ["Desktop (опционально)"]
-        H[Tauri GUI\nRust + WebView] -->|read_stats / search / list| G
-        H -->|dashboard + граф| I[Пользователь\nс GUI]
+        H["Tauri GUI\nRust + WebView"] -->|"read_stats / search / list"| G
+        H -->|"dashboard + граф"| I["Пользователь\nс GUI"]
     end
 
-    F -->|search: cosine similarity| C
-    C -->|JSON-результаты| B
-    B -->|stdout JSON| A1
+    F -->|"search: cosine similarity"| C
+    C -->|"JSON-результаты"| B
+    B -->|"stdout JSON"| A1
 ```
 
 ## Data Flow: add()
