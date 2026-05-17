@@ -117,10 +117,10 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    Q[search(query, topK)] --> Try{_embed успешен?}
-    Try -->|да| Vec[_vectorSearch\ncosine similarity по векторам]
-    Try -->|нет| Text[_textSearch\nпоиск по словам в тексте]
-    Vec --> Result[отсортировать, вернуть topK]
+    Q["search(query, topK)"] --> Try{_embed успешен?}
+    Try -->|да| Vec["_vectorSearch\ncosine similarity по векторам"]
+    Try -->|нет| Text["_textSearch\nпоиск по словам в тексте"]
+    Vec --> Result["отсортировать, вернуть topK"]
     Text --> Result
 ```
 
