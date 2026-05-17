@@ -26,21 +26,21 @@ import { LocalRAG } from './index.js';
 
 const rag = new LocalRAG({ model: 'nomic-embed-text' });
 
-const id = await rag.add('PRO=$4.99/мес, ULTRA=$9.99/мес', {
+const id = await rag.add('RAG расшифровывается как Retrieval-Augmented Generation', {
   role: 'assistant',
-  conversationId: 'pricing',    // опционально
+  conversationId: 'intro-rag',  // опционально
   timestamp: Date.now(),        // опционально (авто)
   messageIndex: 0,              // опционально (автоинкремент)
 });
 
-const results = await rag.search('сколько стоит PRO', 3);
+const results = await rag.search('как работает RAG', 3);
 // [{ text, similarity, id, meta }, ...]
 
 rag.remove(id);
-rag.removeByConversation('pricing');
+rag.removeByConversation('intro-rag');
 rag.clear();
-await rag.save('./dump.json');
-await rag.load('./dump.json');
+await rag.save('./context-dump.json');
+await rag.load('./context-dump.json');
 rag.size(); // количество чанков
 ```
 
@@ -48,15 +48,15 @@ rag.size(); // количество чанков
 
 ```bash
 # Добавить
-node cli.js add "PRO=$4.99/мес, ULTRA=$9.99/мес"
-node cli.js add "спросил про тарифы" --meta '{"role":"user"}'
+node cli.js add "RAG — это поиск + генерация. Сначала ищем релевантные чанки, потом докидываем их в промпт LLM"
+node cli.js add "спросил про разницу между RAG и fine-tuning" --meta '{"role":"user"}'
 
 # Поиск
-node cli.js search "сколько стоит PRO" --top 5
+node cli.js search "как работает RAG" --top 5
 
 # Персистентность
-node cli.js save .kilo/rag-context.json
-node cli.js load .kilo/rag-context.json
+node cli.js save .kilo/context-dump.json
+node cli.js load .kilo/context-dump.json
 
 # Управление
 node cli.js clear
