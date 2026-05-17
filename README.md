@@ -2,6 +2,17 @@
 
 Локальное RAG-хранилище без БД. Чанкает текст → эмбеддит через Ollama → хранит векторы в RAM (Map) → ищет косинусным сходством.
 
+| Раздел | Описание |
+|--------|----------|
+| [Схемы архитектуры](./docs/schemas.md) | Mermaid-диаграммы: data flow, CLI lifecycle, структура JSON |
+| [Требования](#требования) | Node.js, Ollama, модель |
+| [Установка](#установка) | Клонирование, настройка |
+| [API](#api) | Класс LocalRAG — add, search, remove, save, load |
+| [CLI](#cli) | Команды для агента: add, search, save, load |
+| [Тесты](#тесты) | Запуск smoke-тестов |
+| [Ollama](#ollama) | Расход ресурсов, порты, запуск |
+| [Интеграция с KiloCode](#интеграция-с-kilocode) | CLI-жизненный цикл сессии |
+
 ## Требования
 
 - Node.js 18+
@@ -14,8 +25,8 @@ ollama pull nomic-embed-text
 ## Установка
 
 ```bash
-git clone <url> local-rag-store
-cd local-rag-store
+git clone https://github.com/Kotenko356/local-llm-storage-rag.git
+cd local-llm-storage-rag
 npm install   # нет внешних зависимостей, только type:module
 ```
 
@@ -72,6 +83,34 @@ node cli.js remove-by-conversation <conversationId>
 node test.js
 ```
 
+## Ollama
+
+Локальный сервер эмбеддингов. Единственная внешняя зависимость проекта.
+
+### Модель `nomic-embed-text`
+
+| Параметр | Значение |
+|----------|----------|
+| Размер модели | 137 MB на диске |
+| RAM в простое | ~150–300 MB (модель загружена в память) |
+| RAM на один запрос | не растёт (единоразовая загрузка) |
+| CPU в простое | 0% |
+| CPU при эмбеддинге | ~10–15% одного ядра |
+| Время эмбеддинга | 5–10 ms на текст (500 chars) |
+| Порт | `localhost:11434` |
+
+### Запуск
+
+```bash
+ollama serve                        # запустить сервер (если не запущен как сервис)
+ollama pull nomic-embed-text        # скачать модель (однократно)
+ollama list                         # проверить загруженные модели
+```
+
+### Если сервер недоступен
+
+`add()` и `search()` упадут с ошибкой `fetch failed`. Команды без эмбеддингов (`clear`, `save`, `load`, `remove`, `remove-by-conversation`) продолжают работать.
+
 ## Интеграция с KiloCode
 
 Агент вызывает CLI через bash в начале и конце сессии:
@@ -93,10 +132,12 @@ node cli.js save .kilo/rag-context.json
 
 ```
 local-rag-store/
-├── index.js       # Ядро: class LocalRAG
-├── embedder.js    # Ollama HTTP-клиент
-├── cli.js         # CLI-интерфейс
-├── test.js        # Дымовые тесты
-├── package.json   # { "type": "module" }
+├── index.js         # Ядро: class LocalRAG
+├── embedder.js      # Ollama HTTP-клиент
+├── cli.js           # CLI-интерфейс
+├── test.js          # Дымовые тесты
+├── package.json     # { "type": "module" }
+├── docs/
+│   └── schemas.md   # Mermaid-диаграммы архитектуры
 └── README.md
 ```
