@@ -313,8 +313,8 @@ function drawGraph() {
       const from = graphNodes.find(n => n.id === edge.from);
       const to = graphNodes.find(n => n.id === edge.to);
       if (!from || !to) continue;
-      const alpha = Math.max(edge.weight * 0.6, 0.1);
-      ctx.strokeStyle = `rgba(88, 166, 255, ${alpha})`;
+      const alpha = Math.max(edge.weight * 0.5, 0.08);
+      ctx.strokeStyle = `rgba(122, 154, 146, ${alpha})`;
       ctx.lineWidth = edge.weight * 2;
       ctx.beginPath();
       ctx.moveTo(from.x || 0, from.y || 0);
@@ -331,13 +331,13 @@ function drawGraph() {
       ctx.arc(x, y, r, 0, 2 * Math.PI);
 
       if (node.isCenter) {
-        ctx.fillStyle = '#f0883e';
+        ctx.fillStyle = '#c4a86a';
       } else if (node.role === 'user') {
-        ctx.fillStyle = '#58a6ff';
+        ctx.fillStyle = '#7aacd8';
       } else if (node.role === 'assistant') {
-        ctx.fillStyle = '#3fb950';
+        ctx.fillStyle = '#7a9a92';
       } else {
-        ctx.fillStyle = '#d2a8ff';
+        ctx.fillStyle = '#b89ac8';
       }
       ctx.fill();
 
