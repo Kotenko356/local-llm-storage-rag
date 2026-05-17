@@ -1,5 +1,5 @@
 import { LocalRAG } from './index.js';
-import { unlinkSync } from 'node:fs';
+import { unlinkSync, existsSync } from 'node:fs';
 import { strict as assert } from 'node:assert';
 
 const DUMP = './test-dump.json';
@@ -179,6 +179,45 @@ async function run() {
     } catch (err) {
       assert.ok(err.message.includes('File not found'));
     }
+  });
+
+  await test('text search fallback works when embed fails', async () => {
+    const rag = new LocalRAG({
+      embed: async () => { throw new Error('Ollama down'); },
+    });
+    await rag.add('RAG расшифровывается как Retrieval-Augmented Generation', { role: 'assistant' });
+    await rag.add('PRO=$4.99/мес, ULTRA=$9.99/мес', { role: 'assistant' });
+    await rag.add('как работает RAG', { role: 'user' });
+
+    const results = await rag.search('RAG', 5);
+    assert.equal(results.length, 2);
+    assert.ok(results[0].similarity >= results[1].similarity);
+    assert.ok(results[0].similarity > 0);
+  });
+
+  await test('text search returns empty for no match', async () => {
+    const rag = new LocalRAG({
+      embed: async () => { throw new Error('Ollama down'); },
+    });
+    await rag.add('только про котиков', { role: 'assistant' });
+
+    const results = await rag.search('криптовалюта', 5);
+    assert.equal(results.length, 0);
+  });
+
+  await test('save creates backup of existing file', async () => {
+    cleanup();
+    const rag = createRAG();
+    await rag.add('первое сохранение', { role: 'user' });
+    await rag.save(DUMP);
+
+    await rag.add('второе сохранение', { role: 'user' });
+    await rag.save(DUMP);
+
+    assert.ok(existsSync(DUMP + '.bak'), 'backup file should exist');
+
+    cleanup();
+    try { unlinkSync(DUMP + '.bak'); } catch {}
   });
 
   console.log(`\n  passed: ${passed}, failed: ${failed}\n`);

@@ -111,7 +111,26 @@ sequenceDiagram
     RAG-->>Agent: [{ text, similarity, id, meta }, ...]
 ```
 
-## Data Flow: save / load
+## Data Flow: search fallback (без Ollama)
+
+Если Ollama недоступен, `search()` автоматически переключается на текстовый поиск. Без ошибок, пустых результатов — просто менее точное совпадение.
+
+```mermaid
+flowchart TD
+    Q[search(query, topK)] --> Try{_embed успешен?}
+    Try -->|да| Vec[_vectorSearch\ncosine similarity по векторам]
+    Try -->|нет| Text[_textSearch\nпоиск по словам в тексте]
+    Vec --> Result[отсортировать, вернуть topK]
+    Text --> Result
+```
+
+Текстовый поиск разбивает запрос на слова, ищет каждое слово в тексте чанков и считает долю совпавших слов.
+
+---
+
+## Data Flow: save / load (с бэкапом)
+
+При сохранении старый дамп автоматически переименовывается в `.bak` перед перезаписью. Однажды спасёт от потери данных.
 
 ```mermaid
 sequenceDiagram
