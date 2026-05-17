@@ -18,6 +18,7 @@
 | [CLI](#cli) | Команды для агента |
 | [Тесты](#тесты) | Запуск smoke-тестов |
 | [Интеграция с KiloCode](#интеграция-с-kilocode) | CLI-жизненный цикл сессии |
+| [Автосохранение](#автосохранение) | Агент сам сохраняет контекст — без ручных команд |
 | [Ollama: ресурсы, порты, запуск](#ollama-ресурсы-порты-запуск) | CPU, RAM, порт |
 | [Дополнительные ответы на вопросы](#дополнительные-ответы-на-вопросы) | Непонятные моменты |
 
@@ -353,6 +354,43 @@ node cli.js save .kilo/rag-context.json
 
 ---
 
+## Автосохранение
+
+Репозиторий содержит готовый шаблон `.kilo/` для настройки автосохранения без ручных команд.
+
+### Как подключить к любому проекту
+
+```powershell
+# Способ 1: скопировать .kilo/ в корень целевого проекта
+cp -r ../local-rag-store/.kilo/* .kilo/
+
+# Способ 2: создать симлинк на глобальный конфиг
+# Поместить rag-autosave.md в ~/.kilo/agent/ — работает во всех проектах
+```
+
+При старте сессии KiloCode читает `.kilo/agent/*.md` и вставляет в промпт агента. Файл `.kilo/agent/rag-autosave.md` инструктирует агента:
+
+- **Каждые 5-7 сообщений** — сохранять ключевые выводы через `node cli.js add`
+- **В конце сессии** — `node cli.js save .kilo/rag-context.json`
+- **На старте** — `load` + `search` для восстановления контекста прошлых сессий
+
+Всё происходит тихо: пользователь не видит CLI-команды, агент продолжает диалог как ни в чём не бывало.
+
+### Ручное сохранение
+
+```powershell
+node cli.js add "вывод по итогам обсуждения"
+node cli.js save .kilo/rag-context.json
+```
+
+Команда `/rag-save` делает всё сразу — добавляет выводы и сохраняет дамп.
+
+### Схема auto-save
+
+Подробная Mermaid-диаграмма автосохранения в [docs/schemas.md](./docs/schemas.md#auto-save-workflow).
+
+---
+
 ## Ollama: ресурсы, порты, запуск
 
 ### Проверка статуса
@@ -441,13 +479,22 @@ Windows, macOS, Linux. Ollama и Node.js кроссплатформенные.
 
 ```
 local-rag-store/
-├── index.js         # Ядро: class LocalRAG
-├── embedder.js      # Ollama HTTP-клиент
-├── cli.js           # CLI-интерфейс
-├── test.js          # Дымовые тесты (без Ollama)
-├── package.json     # { "type": "module" }
+├── index.js                  # Ядро: class LocalRAG
+├── embedder.js               # Ollama HTTP-клиент
+├── cli.js                    # CLI-интерфейс
+├── test.js                   # Дымовые тесты (без Ollama)
+├── package.json              # { "type": "module" }
+├── .kilo/
+│   ├── agent/
+│   │   └── rag-autosave.md   # Автосохранение контекста агентом
+│   └── command/
+│       └── rag-save.md       # Ручное сохранение /rag-save
+├── desktop/                  # Tauri-монитор (опционально)
+│   ├── src-tauri/            # Rust-backend
+│   ├── src/                  # Frontend (HTML/CSS/JS)
+│   └── README.md
 ├── docs/
-│   └── schemas.md   # Mermaid-диаграммы архитектуры
+│   └── schemas.md            # Mermaid-диаграммы архитектуры
 └── README.md
 ```
 
@@ -455,4 +502,4 @@ local-rag-store/
 
 ## Схемы
 
-Mermaid-диаграммы архитектуры, data flow, CLI lifecycle и структуры JSON: [docs/schemas.md](./docs/schemas.md).
+Mermaid-диаграммы архитектуры, data flow, автосохранения, CLI lifecycle и структуры JSON: [docs/schemas.md](./docs/schemas.md).

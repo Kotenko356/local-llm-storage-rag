@@ -8,9 +8,10 @@
 | 4 | [Data Flow: search()](#data-flow-search) | Эмбеддинг запроса, cosine similarity, возврат результатов |
 | 5 | [Data Flow: save / load](#data-flow-save--load) | Персистентность: запись и чтение JSON-дампа |
 | 6 | [CLI Lifecycle](#cli-lifecycle-интеграция-с-kilocode) | Жизненный цикл сессии KiloCode через CLI |
-| 7 | [Desktop Monitor](#desktop-monitor-опционально) | Tauri GUI: Dashboard, Explorer, Graph |
-| 8 | [Структура JSON-дампа](#структура-json-дампа) | Формат файла: version, chunks, meta |
-| 9 | [Полная диаграмма компонентов](#полная-диаграмма-компонентов) | Все модули, их связи и внешние зависимости |
+| 7 | [Auto-Save Workflow](#auto-save-workflow) | Автосохранение через `.kilo/agent/rag-autosave.md` |
+| 8 | [Desktop Monitor](#desktop-monitor-опционально) | Tauri GUI: Dashboard, Explorer, Graph |
+| 9 | [Структура JSON-дампа](#структура-json-дампа) | Формат файла: version, chunks, meta |
+| 10 | [Полная диаграмма компонентов](#полная-диаграмма-компонентов) | Все модули, их связи и внешние зависимости |
 
 ---
 
@@ -145,6 +146,45 @@ flowchart TD
 
     Work --> End[Конец сессии]
     End --> Save[save .kilo/rag-context.json]
+```
+
+## Auto-Save Workflow
+
+Автоматическое сохранение через `.kilo/agent/rag-autosave.md`. Агент читает инструкцию при старте и выполняет add()/save() без вмешательства пользователя.
+
+```mermaid
+sequenceDiagram
+    participant User as Пользователь
+    participant Agent as KiloCode Agent
+    participant RAG as LocalRAG + CLI
+    participant Ollama as Ollama
+    participant FS as Файловая система
+
+    Note over Agent: Загрузка .kilo/agent/rag-autosave.md
+
+    Agent->>RAG: load .kilo/rag-context.json
+    RAG->>FS: readFile
+    FS-->>RAG: JSON
+    Agent->>RAG: search "тема первого сообщения"
+    RAG->>Ollama: embed(query)
+    Ollama-->>RAG: queryVec
+    RAG-->>Agent: top-5 чанков
+
+    loop Каждые 5-7 сообщений
+        User->>Agent: сообщение
+        Agent->>Agent: определить ключевую тему
+        Agent->>RAG: add "резюме вывода" (тихо)
+        RAG->>Ollama: embed(text)
+        Ollama-->>RAG: вектор
+        RAG->>RAG: сохранить в Map
+        Agent->>RAG: save (тихо)
+        RAG->>FS: writeFile
+        Agent-->>User: ответ (пользователь не видит RAG-команды)
+    end
+
+    Note over Agent: Завершение сессии
+    Agent->>RAG: save .kilo/rag-context.json
+    RAG->>FS: writeFile
 ```
 
 ## Desktop Monitor (опционально)
