@@ -7,7 +7,20 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="app">
+  <div id="not-tauri" class="hidden">
+    <div class="stub-card glass">
+      <div class="stub-icon">◆</div>
+      <h2>local-rag-store</h2>
+      <p>Это приложение предназначено для запуска <strong>только через Tauri</strong>.</p>
+      <p>Откройте <code>local-rag-store.exe</code>, чтобы начать работу.</p>
+      <div class="stub-hint">
+        Если вы видите это сообщение, значит файл открыт в браузере.<br />
+        Соберите бинарник: <code>cargo tauri build</code> в папке <code>desktop/</code>
+      </div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
     <!-- Header -->
     <header>
       <h1>local-rag-store</h1>

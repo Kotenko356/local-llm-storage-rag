@@ -13,7 +13,7 @@ const DB = window.__TAURI__;
 // ── Invoke helper ─────────────────────────────────────────
 
 async function cmd(name, args = {}) {
-  if (!DB) throw new Error('Not running in Tauri');
+  if (!DB) throw new Error('Функция доступна только внутри Tauri');
   return DB.core.invoke(name, args);
 }
 
@@ -462,9 +462,21 @@ $('btn-browse').addEventListener('click', async () => {
   }
 });
 
-// ── Init ──────────────────────────────────────────────────
+// ── Tauri detection ───────────────────────────────────────
 
 (function init() {
+  const isTauri = !!(window.__TAURI__ || window.__TAURI_INTERNALS__);
+
+  if (!isTauri) {
+    document.getElementById('not-tauri').classList.remove('hidden');
+    document.getElementById('app').classList.add('hidden');
+    document.title = 'local-rag-store — вне Tauri';
+    return;
+  }
+
+  document.getElementById('not-tauri').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+
   if (state.path) {
     dumpPath.value = state.path;
     loadDump(state.path);
